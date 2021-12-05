@@ -52,10 +52,15 @@ WORKDIR /
 
 ##########
 ##########
-FROM debian:buster-slim
+FROM node:16.13.1-buster-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y git
+
+# Add protoc-grpc js plugin
+ARG GRPC_NODE_TOOLS_VERSION=1.11.2
+RUN npm i -g grpc-tools@${GRPC_NODE_TOOLS_VERSION}
+RUN ln -s $(which grpc_tools_node_protoc_plugin) /usr/local/bin/protoc-gen-js-grpc
 
 # Copy protoc and well known proto files
 COPY --from=build /tmp/protoc/bin/ /usr/local/bin/

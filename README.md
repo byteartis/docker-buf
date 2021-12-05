@@ -12,6 +12,7 @@ Docker image with Buf and support for protobuf and grpc code generation in multi
 | [grpc-java](https://github.com/grpc/grpc-java) | v1.42.1 |
 | [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | v1.27.1 |
 | [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | v1.1.0 |
+| [grpc-tools](https://www.npmjs.com/package/grpc-tools) | v1.11.2 |
 
 ## Language Support
 
@@ -27,6 +28,7 @@ Full support for protobuf and grpc generation for the following languages:
 | Objective-C | **objc**, **objc-grpc** |
 | Java | **java**, **java-grpc** |
 | Go | **go**, **go-grpc** |
+| JavaScript | **js**, **js-grpc** |
 
 ## Example buf.gen.yaml
 
@@ -82,4 +84,8 @@ plugins:
 
   - name: js
     out: gen/js
+    opt: import_style=commonjs,binary
+  - name: js-grpc
+    out: gen/js
+    opt: grpc_js
 ```
