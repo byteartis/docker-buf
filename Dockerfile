@@ -32,6 +32,12 @@ RUN git clone --depth 1 --shallow-submodules -b v${GRPC_JAVA_VERSION} --recursiv
 WORKDIR /tmp/grpc-java
 RUN $bazel build //compiler:grpc_java_plugin
 
+# https://github.com/grpc/grpc-web
+WORKDIR /tmp
+ARG PROTOC_WEB_GRPC_VERSION=1.3.0
+RUN curl -sSL "https://github.com/grpc/grpc-web/releases/download/${PROTOC_WEB_GRPC_VERSION}/protoc-gen-grpc-web-${PROTOC_WEB_GRPC_VERSION}-linux-x86_64" -o /usr/local/bin/protoc-gen-web-grpc && \
+    chmod +x /usr/local/bin/protoc-gen-web-grpc
+
 # https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go
 ARG PROTOC_GO_VERSION=1.27.1
 RUN GOBIN=/usr/local/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOC_GO_VERSION}
@@ -52,15 +58,20 @@ WORKDIR /
 
 ##########
 ##########
-FROM node:16.13.1-buster-slim
+FROM node:16.13.1-buster-slim AS build-node
+
+# https://github.com/grpc/grpc-node/tree/master/packages/grpc-tools
+ARG GRPC_NODE_TOOLS_VERSION=1.11.2
+RUN npm i -g grpc-tools@${GRPC_NODE_TOOLS_VERSION}
+RUN cp /usr/local/lib/node_modules/grpc-tools/bin/grpc_node_plugin /usr/local/bin/protoc-gen-node-grpc
+
+
+##########
+##########
+FROM debian:buster-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y git
-
-# Add protoc-grpc js plugin
-ARG GRPC_NODE_TOOLS_VERSION=1.11.2
-RUN npm i -g grpc-tools@${GRPC_NODE_TOOLS_VERSION}
-RUN ln -s $(which grpc_tools_node_protoc_plugin) /usr/local/bin/protoc-gen-js-grpc
 
 # Copy protoc and well known proto files
 COPY --from=build /tmp/protoc/bin/ /usr/local/bin/
@@ -76,6 +87,12 @@ COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin /usr/
 
 # Copy protoc-grpc java plugin
 COPY --from=build /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
+
+# Copy protoc-grpc web plugin
+COPY --from=build /usr/local/bin/protoc-gen-web-grpc /usr/local/bin/protoc-gen-web-grpc
+
+# Copy protoc-grpc node plugin
+COPY --from=build-node /usr/local/bin/protoc-gen-node-grpc /usr/local/bin/protoc-gen-node-grpc
 
 # Copy protoc and protoc-grpc go plugins
 COPY --from=build /usr/local/bin/protoc-gen-go /usr/local/bin/protoc-gen-go
