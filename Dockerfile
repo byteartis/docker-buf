@@ -13,21 +13,21 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /tmp
 
 # https://github.com/protocolbuffers/protobuf
-ARG PROTOC_VERSION=3.19.1
+ARG PROTOC_VERSION=3.19.3
 RUN curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip" -o protoc.zip && \
     unzip protoc.zip -d protoc/ && \
     chmod +x ./protoc/bin/protoc
 
 # https://github.com/grpc/grpc
 ARG bazel=/tmp/grpc/tools/bazel
-ARG GRPC_VERSION=1.42.0
+ARG GRPC_VERSION=1.43.0
 RUN git clone --depth 1 --shallow-submodules -b v${GRPC_VERSION} --recursive https://github.com/grpc/grpc
 WORKDIR /tmp/grpc
 RUN $bazel build //src/compiler:all
 
 # https://github.com/grpc/grpc-java
 WORKDIR /tmp
-ARG GRPC_JAVA_VERSION=1.42.1
+ARG GRPC_JAVA_VERSION=1.43.2
 RUN git clone --depth 1 --shallow-submodules -b v${GRPC_JAVA_VERSION} --recursive https://github.com/grpc/grpc-java
 WORKDIR /tmp/grpc-java
 RUN $bazel build //compiler:grpc_java_plugin
@@ -43,11 +43,11 @@ ARG PROTOC_GO_VERSION=1.27.1
 RUN GOBIN=/usr/local/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOC_GO_VERSION}
 
 # https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc
-ARG PROTOC_GO_GRPC_VERSION=1.1.0
+ARG PROTOC_GO_GRPC_VERSION=1.2.0
 RUN GOBIN=/usr/local/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${PROTOC_GO_GRPC_VERSION}
 
 # https://github.com/bufbuild/buf
-ARG BUF_VERSION=1.0.0-rc8
+ARG BUF_VERSION=1.0.0-rc10
 RUN GOBIN=/usr/local/bin go install \
     github.com/bufbuild/buf/cmd/buf@v${BUF_VERSION} \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@v${BUF_VERSION} \
