@@ -6,7 +6,7 @@ Docker image with Buf and support for protobuf and grpc code generation in multi
 
 | Tool | Version |
 | - | - |
-| [buf](https://github.com/bufbuild/buf) | v1.0.0-rc10 |
+| [buf](https://github.com/bufbuild/buf) | v1.0.0-rc11 |
 | [protoc](https://github.com/protocolbuffers/protobuf) | v3.19.3 |
 | [grpc](https://github.com/grpc/grpc) | v1.43.0 |
 | [grpc-java](https://github.com/grpc/grpc-java) | v1.43.2 |

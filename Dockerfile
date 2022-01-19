@@ -47,7 +47,7 @@ ARG PROTOC_GO_GRPC_VERSION=1.2.0
 RUN GOBIN=/usr/local/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${PROTOC_GO_GRPC_VERSION}
 
 # https://github.com/bufbuild/buf
-ARG BUF_VERSION=1.0.0-rc10
+ARG BUF_VERSION=1.0.0-rc11
 RUN GOBIN=/usr/local/bin go install \
     github.com/bufbuild/buf/cmd/buf@v${BUF_VERSION} \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@v${BUF_VERSION} \
