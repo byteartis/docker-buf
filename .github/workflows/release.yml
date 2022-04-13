@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set ENV variables
-        run: for v in `cat versions.env` ; do echo "::set-env name=${v%%=*}::${v##*=}" ; done
+        run: for v in `cat versions.env` ; do echo "${v%%=*}=${v##*=}" >> $GITHUB_ENV ; done
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
