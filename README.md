@@ -6,11 +6,11 @@ Docker image with Buf and support for protobuf and grpc code generation in multi
 
 | Tool | Version |
 | - | - |
-| [buf](https://github.com/bufbuild/buf) | v1.1.0 |
-| [protoc](https://github.com/protocolbuffers/protobuf) | v3.19.4 |
-| [grpc](https://github.com/grpc/grpc) | v1.44.0 |
-| [grpc-java](https://github.com/grpc/grpc-java) | v1.44.1 |
-| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | v1.27.1 |
+| [buf](https://github.com/bufbuild/buf) | v1.3.1 |
+| [protoc](https://github.com/protocolbuffers/protobuf) | v3.20.0 |
+| [grpc](https://github.com/grpc/grpc) | v1.45.2 |
+| [grpc-java](https://github.com/grpc/grpc-java) | v1.45.1 |
+| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | v1.28.0 |
 | [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | v1.2.0 |
 | [grpc-tools](https://www.npmjs.com/package/grpc-tools) | v1.11.2 |
 | [grpc-web](https://github.com/grpc/grpc-web) | v1.3.1 |
