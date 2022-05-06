@@ -43,7 +43,7 @@ jobs:
         run: for v in `cat versions.env` ; do echo "${v%%=*}=${v##*=}" >> $GITHUB_ENV ; done
 
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           push: true
