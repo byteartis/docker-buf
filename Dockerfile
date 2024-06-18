@@ -1,11 +1,11 @@
-FROM --platform=linux/amd64 golang:1.17-buster AS build
+FROM --platform=linux/amd64 golang:1.22.4-bookworm AS build
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     # dependencies for grpc compile
     build-essential autoconf libtool pkg-config clang libc++-dev \
     # dependencies for grpc-java compile
-    openjdk-11-jre \
+    openjdk-17-jre \
     curl \
     unzip \
     zsh
@@ -13,41 +13,49 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /tmp
 
 # https://github.com/protocolbuffers/protobuf
-ARG PROTOC_VERSION=3.19.4
+ARG PROTOC_VERSION
 RUN curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip" -o protoc.zip && \
     unzip protoc.zip -d protoc/ && \
     chmod +x ./protoc/bin/protoc
 
 # https://github.com/grpc/grpc
 ARG bazel=/tmp/grpc/tools/bazel
-ARG GRPC_VERSION=1.44.0
+ARG GRPC_VERSION
 RUN git clone --depth 1 --shallow-submodules -b v${GRPC_VERSION} --recursive https://github.com/grpc/grpc
 WORKDIR /tmp/grpc
 RUN $bazel build //src/compiler:all
 
 # https://github.com/grpc/grpc-java
 WORKDIR /tmp
-ARG GRPC_JAVA_VERSION=1.44.1
+ARG GRPC_JAVA_VERSION
 RUN git clone --depth 1 --shallow-submodules -b v${GRPC_JAVA_VERSION} --recursive https://github.com/grpc/grpc-java
 WORKDIR /tmp/grpc-java
 RUN $bazel build //compiler:grpc_java_plugin
 
+# https://github.com/protocolbuffers/protobuf-javascript
+WORKDIR /tmp
+ARG PROTOC_JS_VERSION
+RUN curl -sSL "https://github.com/protocolbuffers/protobuf-javascript/releases/download/v${PROTOC_JS_VERSION}/protobuf-javascript-${PROTOC_JS_VERSION}-linux-x86_64.zip" \
+    -o protoc-gen-js.zip && \
+    unzip protoc-gen-js.zip -d protoc-gen-js/ && \
+    chmod +x protoc-gen-js/bin/protoc-gen-js
+
 # https://github.com/grpc/grpc-web
 WORKDIR /tmp
-ARG PROTOC_WEB_GRPC_VERSION=1.3.1
+ARG PROTOC_WEB_GRPC_VERSION
 RUN curl -sSL "https://github.com/grpc/grpc-web/releases/download/${PROTOC_WEB_GRPC_VERSION}/protoc-gen-grpc-web-${PROTOC_WEB_GRPC_VERSION}-linux-x86_64" -o /usr/local/bin/protoc-gen-web-grpc && \
     chmod +x /usr/local/bin/protoc-gen-web-grpc
 
 # https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go
-ARG PROTOC_GO_VERSION=1.27.1
+ARG PROTOC_GO_VERSION
 RUN GOBIN=/usr/local/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOC_GO_VERSION}
 
 # https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc
-ARG PROTOC_GO_GRPC_VERSION=1.2.0
-RUN GOBIN=/usr/local/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${PROTOC_GO_GRPC_VERSION}
+ARG PROTOC_GO_GRPC_VERSION
+RUN GOBIN=/usr/local/bin go install "google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${PROTOC_GO_GRPC_VERSION}"
 
 # https://github.com/bufbuild/buf
-ARG BUF_VERSION=1.1.0
+ARG BUF_VERSION
 RUN GOBIN=/usr/local/bin go install \
     github.com/bufbuild/buf/cmd/buf@v${BUF_VERSION} \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@v${BUF_VERSION} \
@@ -58,17 +66,17 @@ WORKDIR /
 
 ##########
 ##########
-FROM node:16.13.1-buster-slim AS build-node
+FROM node:20-bookworm-slim AS build-node
 
 # https://github.com/grpc/grpc-node/tree/master/packages/grpc-tools
-ARG GRPC_NODE_TOOLS_VERSION=1.11.2
+ARG GRPC_NODE_TOOLS_VERSION
 RUN npm i -g grpc-tools@${GRPC_NODE_TOOLS_VERSION}
 RUN cp /usr/local/lib/node_modules/grpc-tools/bin/grpc_node_plugin /usr/local/bin/protoc-gen-node-grpc
 
 
 ##########
 ##########
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y git
@@ -87,6 +95,9 @@ COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin /usr/
 
 # Copy protoc-grpc java plugin
 COPY --from=build /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
+
+# Copy protoc-grpc js plugin
+COPY --from=build /tmp/protoc-gen-js/bin/protoc-gen-js /usr/local/bin/protoc-gen-js
 
 # Copy protoc-grpc web plugin
 COPY --from=build /usr/local/bin/protoc-gen-web-grpc /usr/local/bin/protoc-gen-web-grpc

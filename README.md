@@ -6,14 +6,15 @@ Docker image with Buf and support for protobuf and grpc code generation in multi
 
 | Tool | Version |
 | - | - |
-| [buf](https://github.com/bufbuild/buf) | v1.3.1 |
-| [protoc](https://github.com/protocolbuffers/protobuf) | v3.20.0 |
-| [grpc](https://github.com/grpc/grpc) | v1.45.2 |
-| [grpc-java](https://github.com/grpc/grpc-java) | v1.45.1 |
-| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | v1.28.0 |
-| [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | v1.2.0 |
-| [grpc-tools](https://www.npmjs.com/package/grpc-tools) | v1.11.2 |
-| [grpc-web](https://github.com/grpc/grpc-web) | v1.3.1 |
+| [buf](https://github.com/bufbuild/buf) | v1.33.0 |
+| [protoc](https://github.com/protocolbuffers/protobuf) | v27.1 |
+| [grpc](https://github.com/grpc/grpc) | v1.64.2 |
+| [grpc-java](https://github.com/grpc/grpc-java) | v1.64.0 |
+| [protoc-gen-js](https://github.com/protocolbuffers/protobuf-javascript) | v3.21.2 |
+| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | v1.34.2 |
+| [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | v1.4.0 |
+| [grpc-tools](https://www.npmjs.com/package/grpc-tools) | v1.12.4 |
+| [grpc-web](https://github.com/grpc/grpc-web) | v1.5.0 |
 
 ## Language Support
 

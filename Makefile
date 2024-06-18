@@ -1,30 +1,17 @@
-.DEFAULT_GOAL := help
+include ./versions.env
+export
 
-## Build docker image
-build:
-	@echo 'Building docker image...'
-	@docker build -t ealves/buf:latest .
-
-# -- help
-# COLORS
-GREEN  := $(shell tput -Txterm setaf 2)
-YELLOW := $(shell tput -Txterm setaf 3)
-WHITE  := $(shell tput -Txterm setaf 7)
-RESET  := $(shell tput -Txterm sgr0)
-TARGET_MAX_CHAR_NUM=20
-## Show help
-help:
-	@echo ''
-	@echo 'Usage:'
-	@echo '  ${YELLOW}make${RESET} ${GREEN}<target>${RESET}'
-	@echo ''
-	@echo 'Targets:'
-	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
-		helpMessage = match(lastLine, /^## (.*)/); \
-		if (helpMessage) { \
-			helpCommand = substr($$1, 0, index($$1, ":")-1); \
-			helpMessage = substr(lastLine, RSTART + 3, RLENGTH); \
-			printf "  ${YELLOW}%-$(TARGET_MAX_CHAR_NUM)s${RESET} ${GREEN}%s${RESET}\n", helpCommand, helpMessage; \
-		} \
-	} \
-	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+build-local:
+	@docker build \
+		--network host \
+		--build-arg BUF_VERSION=$(BUF_VERSION) \
+		--build-arg PROTOC_VERSION=$(PROTOC_VERSION) \
+		--build-arg GRPC_VERSION=$(GRPC_VERSION) \
+		--build-arg GRPC_JAVA_VERSION=$(GRPC_JAVA_VERSION) \
+		--build-arg PROTOC_JS_VERSION=$(PROTOC_JS_VERSION) \
+		--build-arg PROTOC_GO_VERSION=$(PROTOC_GO_VERSION) \
+		--build-arg PROTOC_GO_GRPC_VERSION=$(PROTOC_GO_GRPC_VERSION) \
+		--build-arg GRPC_NODE_TOOLS_VERSION=$(GRPC_NODE_TOOLS_VERSION) \
+		--build-arg PROTOC_WEB_GRPC_VERSION=$(PROTOC_WEB_GRPC_VERSION) \
+		-t docker-buf:local \
+		.
