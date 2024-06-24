@@ -37,7 +37,7 @@ The image includes [Buf](https://buf.build/) to facilitate code generation, lint
 | [grpc-tools](https://www.npmjs.com/package/grpc-tools) | v1.12.4 |
 | [grpc-web](https://github.com/grpc/grpc-web) | v1.5.0 |
 | [protoc-gen-connect-go](https://github.com/connectrpc/connect-go) | v1.16.2 |
-| [protoc-gen-connect-go](https://github.com/connectrpc/connect-es) | v1.4.0 |
+| [protoc-gen-connect-es](https://github.com/connectrpc/connect-es) | v1.4.0 |
 
 ## Example
 
