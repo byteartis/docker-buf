@@ -20,5 +20,5 @@ build-local:
 		--build-arg GRPC_JAVA_VERSION=$(GRPC_JAVA_VERSION) \
     --build-arg CONNECT_GO_VERSION=$(CONNECT_GO_VERSION) \
     --build-arg CONNECT_ES_VERSION=$(CONNECT_ES_VERSION) \
-		-t byteartis/docker-buf:local \
+		-t byteartis/buf:local \
 		.
