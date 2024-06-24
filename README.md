@@ -1,96 +1,52 @@
 # Docker Buf
 
-Docker image with Buf and support for protobuf and grpc code generation in multiple languages
+Docker image with support for [Protobuf](https://protobuf.dev/), [gRPC](https://grpc.io/), and [Connect](https://connectrpc.com/) code generation for multiple languages.
 
-## Versions
+The image includes [Buf](https://buf.build/) to facilitate code generation, linting, and breaking changes detection.
+
+## Plugins
+
+### Language Support Table
+
+| Language | Protobuf | gRPC | Connect |
+| - | - | - | - |
+| Go | protoc-gen-go | protoc-gen-go-grpc | protoc-gen-connect-go |
+| Java | protoc | protoc-gen-java-grpc | NA |
+| C++ | protoc | protoc-gen-cpp-grpc | NA |
+| C# | protoc | protoc-gen-chsarp-grpc | NA |
+| Objective-C | protoc | protoc-gen-objc-grpc | NA |
+| JavaScript | protoc-gen-js, protoc-gen-es | protoc-gen-node-grpc | protoc-gen-connect-es |
+| TypeScript | protoc-gen-es | NA | protoc-gen-connect-es |
+| Python | protoc | protoc-gen-python-grpc | NA |
+| Ruby | protoc | protoc-gen-ruby-grpc | NA |
+| PHP | protoc | protoc-gen-php-grpc | NA |
+| Web | protoc-gen-es | protoc-gen-grpc-web | protoc-gen-connect-es |
+
+### Versions
 
 | Tool | Version |
 | - | - |
-| [buf](https://github.com/bufbuild/buf) | v1.33.0 |
+| [buf](https://github.com/bufbuild/buf) | v1.34.0 |
 | [protoc](https://github.com/protocolbuffers/protobuf) | v27.1 |
-| [grpc](https://github.com/grpc/grpc) | v1.64.2 |
-| [grpc-java](https://github.com/grpc/grpc-java) | v1.64.0 |
-| [protoc-gen-js](https://github.com/protocolbuffers/protobuf-javascript) | v3.21.2 |
 | [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | v1.34.2 |
+| [protoc-gen-js](https://github.com/protocolbuffers/protobuf-javascript) | v3.21.2 |
+| [protoc-gen-es](https://github.com/bufbuild/protobuf-es) | v1.10.0 |
+| [grpc](https://github.com/grpc/grpc) | v1.64.2 |
 | [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | v1.4.0 |
+| [grpc-java](https://github.com/grpc/grpc-java) | v1.64.0 |
 | [grpc-tools](https://www.npmjs.com/package/grpc-tools) | v1.12.4 |
 | [grpc-web](https://github.com/grpc/grpc-web) | v1.5.0 |
+| [protoc-gen-connect-go](https://github.com/connectrpc/connect-go) | v1.16.2 |
+| [protoc-gen-connect-go](https://github.com/connectrpc/connect-es) | v1.4.0 |
 
-## Language Support
+## Example
 
-Full support for protobuf and grpc generation for the following languages:
+Check the sample repository [here](https://github.com/byteartis/docker-buf-sample).
 
-| Language | Plugins |
-| - | - |
-| C++ | **cpp**, **cpp-grpc** |
-| Ruby | **ruby**, **ruby-grpc** |
-| Python | **python**, **python-grpc** |
-| PHP | **php**, **php-grpc** |
-| C# | **csharp**, **csharp-grpc** |
-| Objective-C | **objc**, **objc-grpc** |
-| Java | **java**, **java-grpc** |
-| Go | **go**, **go-grpc** |
-| JavaScript | **js**, **node-grpc**, **web-grpc** |
+## Versioning
 
-## Example buf.gen.yaml
+Since this image contains multiple tools there is no straightforward way to version it. For that reason versioning will be done based on the following rules:
 
-```yaml
-version: v1
-managed:
-  enabled: true
-  go_package_prefix:
-    default: acme/foo/bar/gen/go
-plugins:
-  - name: cpp
-    out: gen/cpp
-  - name: cpp-grpc
-    out: gen/cpp
-
-  - name: ruby
-    out: gen/ruby
-  - name: ruby-grpc
-    out: gen/ruby
-
-  - name: python
-    out: gen/python
-  - name: python-grpc
-    out: gen/python
-
-  - name: php
-    out: gen/php
-  - name: php-grpc
-    out: gen/php
-
-  - name: csharp
-    out: gen/csharp
-  - name: csharp-grpc
-    out: gen/csharp
-
-  - name: objc
-    out: gen/objc
-  - name: objc-grpc
-    out: gen/objc
-
-  - name: java
-    out: gen/java
-  - name: java-grpc
-    out: gen/java
-
-  - name: go
-    out: gen/go
-    opt: paths=source_relative
-  - name: go-grpc
-    out: gen/go
-    opt:
-      - paths=source_relative
-
-  - name: js
-    out: gen/js
-    opt: import_style=commonjs_strict,binary
-  - name: node-grpc
-    out: gen/js
-    opt: grpc_js
-  - name: web-grpc
-    out: gen/js
-    opt: import_style=commonjs,mode=grpcwebtext
-```
+- Major bump when any of the tools is updated to a new major version
+- Minor bump when any of the tools is updated to a new minor version
+- Patch bump when any of the tools is updated to a new patch version

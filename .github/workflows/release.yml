@@ -29,7 +29,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: byteartis/buf
+          images: byteartis/docker-buf
           tags: |
             type=semver,pattern={{version}}
 
@@ -51,11 +51,15 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BUF_VERSION=${{ env.BUF_VERSION }}
-            PROTOC_VERSION=${{ env.PROTOC_VERSION }}
+            PROTOBUF_VERSION=${{ env.PROTOBUF_VERSION }}
+            PROTOBUF_GO_VERSION=${{ env.PROTOBUF_GO_VERSION }}
+            PROTOBUF_JAVASCRIPT_VERSION=${{ env.PROTOBUF_JAVASCRIPT_VERSION }}
+            PROTOBUF_PROTOPLUGIN_VERSION=${{ env.PROTOBUF_PROTOPLUGIN_VERSION }}
+            PROTOBUF_ES_VERSION=${{ env.PROTOBUF_ES_VERSION }}
             GRPC_VERSION=${{ env.GRPC_VERSION }}
-            GRPC_JAVA_VERSION=${{ env.GRPC_JAVA_VERSION }}
-            PROTOC_JS_VERSION=${{ env.PROTOC_JS_VERSION }}
-            PROTOC_GO_VERSION=${{ env.PROTOC_GO_VERSION }}
-            PROTOC_GO_GRPC_VERSION=${{ env.PROTOC_GO_GRPC_VERSION }}
+            GRPC_GO_VERSION=${{ env.GRPC_GO_VERSION }}
             GRPC_NODE_TOOLS_VERSION=${{ env.GRPC_NODE_TOOLS_VERSION }}
-            PROTOC_WEB_GRPC_VERSION=${{ env.PROTOC_WEB_GRPC_VERSION }}
+            GRPC_WEB_VERSION=${{ env.GRPC_WEB_VERSION }}
+            GRPC_JAVA_VERSION=${{ env.GRPC_JAVA_VERSION }}
+            CONNECT_GO_VERSION=${{ env.CONNECT_GO_VERSION }}
+            CONNECT_ES_VERSION=${{ env.CONNECT_ES_VERSION }}

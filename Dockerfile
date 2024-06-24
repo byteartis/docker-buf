@@ -1,58 +1,38 @@
-FROM --platform=linux/amd64 golang:1.22.4-bookworm AS build
+FROM --platform=linux/amd64 golang:1.22.4-bookworm AS base
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
-    # dependencies for grpc compile
-    build-essential autoconf libtool pkg-config clang libc++-dev \
-    # dependencies for grpc-java compile
-    openjdk-17-jre \
     curl \
-    unzip \
-    zsh
+    unzip
 
 WORKDIR /tmp
 
 # https://github.com/protocolbuffers/protobuf
-ARG PROTOC_VERSION
-RUN curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip" -o protoc.zip && \
+ARG PROTOBUF_VERSION
+RUN curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protoc-${PROTOBUF_VERSION}-linux-x86_64.zip" -o protoc.zip && \
     unzip protoc.zip -d protoc/ && \
     chmod +x ./protoc/bin/protoc
 
-# https://github.com/grpc/grpc
-ARG bazel=/tmp/grpc/tools/bazel
-ARG GRPC_VERSION
-RUN git clone --depth 1 --shallow-submodules -b v${GRPC_VERSION} --recursive https://github.com/grpc/grpc
-WORKDIR /tmp/grpc
-RUN $bazel build //src/compiler:all
-
-# https://github.com/grpc/grpc-java
-WORKDIR /tmp
-ARG GRPC_JAVA_VERSION
-RUN git clone --depth 1 --shallow-submodules -b v${GRPC_JAVA_VERSION} --recursive https://github.com/grpc/grpc-java
-WORKDIR /tmp/grpc-java
-RUN $bazel build //compiler:grpc_java_plugin
-
 # https://github.com/protocolbuffers/protobuf-javascript
-WORKDIR /tmp
-ARG PROTOC_JS_VERSION
-RUN curl -sSL "https://github.com/protocolbuffers/protobuf-javascript/releases/download/v${PROTOC_JS_VERSION}/protobuf-javascript-${PROTOC_JS_VERSION}-linux-x86_64.zip" \
+ARG PROTOBUF_JAVASCRIPT_VERSION
+RUN curl -sSL "https://github.com/protocolbuffers/protobuf-javascript/releases/download/v${PROTOBUF_JAVASCRIPT_VERSION}/protobuf-javascript-${PROTOBUF_JAVASCRIPT_VERSION}-linux-x86_64.zip" \
     -o protoc-gen-js.zip && \
     unzip protoc-gen-js.zip -d protoc-gen-js/ && \
     chmod +x protoc-gen-js/bin/protoc-gen-js
 
 # https://github.com/grpc/grpc-web
 WORKDIR /tmp
-ARG PROTOC_WEB_GRPC_VERSION
-RUN curl -sSL "https://github.com/grpc/grpc-web/releases/download/${PROTOC_WEB_GRPC_VERSION}/protoc-gen-grpc-web-${PROTOC_WEB_GRPC_VERSION}-linux-x86_64" -o /usr/local/bin/protoc-gen-web-grpc && \
+ARG GRPC_WEB_VERSION
+RUN curl -sSL "https://github.com/grpc/grpc-web/releases/download/${GRPC_WEB_VERSION}/protoc-gen-grpc-web-${GRPC_WEB_VERSION}-linux-x86_64" -o /usr/local/bin/protoc-gen-web-grpc && \
     chmod +x /usr/local/bin/protoc-gen-web-grpc
 
 # https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go
-ARG PROTOC_GO_VERSION
-RUN GOBIN=/usr/local/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOC_GO_VERSION}
+ARG PROTOBUF_GO_VERSION
+RUN GOBIN=/usr/local/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOBUF_GO_VERSION}
 
 # https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc
-ARG PROTOC_GO_GRPC_VERSION
-RUN GOBIN=/usr/local/bin go install "google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${PROTOC_GO_GRPC_VERSION}"
+ARG GRPC_GO_VERSION
+RUN GOBIN=/usr/local/bin go install "google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${GRPC_GO_VERSION}"
 
 # https://github.com/bufbuild/buf
 ARG BUF_VERSION
@@ -61,57 +41,96 @@ RUN GOBIN=/usr/local/bin go install \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@v${BUF_VERSION} \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@v${BUF_VERSION}
 
+# Connect gRPC plugins
+ARG CONNECT_GO_VERSION
+RUN GOBIN=/usr/local/bin go install \
+    connectrpc.com/connect/cmd/protoc-gen-connect-go@v${CONNECT_GO_VERSION}
+
 WORKDIR /
 
 
 ##########
 ##########
-FROM node:20-bookworm-slim AS build-node
+FROM debian:bookworm-slim AS protoc
 
-# https://github.com/grpc/grpc-node/tree/master/packages/grpc-tools
-ARG GRPC_NODE_TOOLS_VERSION
-RUN npm i -g grpc-tools@${GRPC_NODE_TOOLS_VERSION}
-RUN cp /usr/local/lib/node_modules/grpc-tools/bin/grpc_node_plugin /usr/local/bin/protoc-gen-node-grpc
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    # dependencies for grpc compile
+    build-essential autoconf libtool pkg-config clang libc++-dev \
+    # dependencies for grpc-java compile
+    openjdk-17-jre \
+    git \
+    curl
+
+WORKDIR /tmp
+
+# https://github.com/grpc/grpc
+ARG bazel=/tmp/grpc/tools/bazel
+ARG GRPC_VERSION
+RUN git clone --depth 1 --shallow-submodules -b v${GRPC_VERSION} --recursive https://github.com/grpc/grpc
+WORKDIR /tmp/grpc
+RUN $bazel build //src/compiler:all
+
+# # https://github.com/grpc/grpc-java
+WORKDIR /tmp
+ARG GRPC_JAVA_VERSION
+RUN git clone --depth 1 --shallow-submodules -b v${GRPC_JAVA_VERSION} --recursive https://github.com/grpc/grpc-java
+WORKDIR /tmp/grpc-java
+RUN $bazel build //compiler:grpc_java_plugin
+
+WORKDIR /
 
 
 ##########
 ##########
-FROM debian:bookworm-slim
+FROM node:20-bookworm-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y git
 
+# https://github.com/grpc/grpc-node/tree/master/packages/grpc-tools
+ARG GRPC_NODE_TOOLS_VERSION
+ARG PROTOBUF_PROTOPLUGIN_VERSION
+ARG PROTOBUF_ES_VERSION
+ARG CONNECT_ES_VERSION
+RUN npm i -g \
+    grpc-tools@${GRPC_NODE_TOOLS_VERSION} \
+    @bufbuild/protoplugin@${PROTOBUF_PROTOPLUGIN_VERSION} \
+    @bufbuild/protoc-gen-es@${PROTOBUF_ES_VERSION} \
+    @connectrpc/protoc-gen-connect-es@${CONNECT_ES_VERSION}
+RUN cp /usr/local/lib/node_modules/grpc-tools/bin/grpc_node_plugin /usr/local/bin/protoc-gen-node-grpc
+
 # Copy protoc and well known proto files
-COPY --from=build /tmp/protoc/bin/ /usr/local/bin/
-COPY --from=build /tmp/protoc/include/google/protobuf/ /opt/include/google/protobuf/
+COPY --from=base /tmp/protoc/bin/ /usr/local/bin/
+COPY --from=base /tmp/protoc/include/google/protobuf/ /opt/include/google/protobuf/
 
-# Copy protoc-grpc default plugins
-COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_php_plugin /usr/local/bin/protoc-gen-php-grpc
-COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_python_plugin /usr/local/bin/protoc-gen-python-grpc
-COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_cpp_plugin /usr/local/bin/protoc-gen-cpp-grpc
-COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_ruby_plugin /usr/local/bin/protoc-gen-ruby-grpc
-COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_csharp_plugin /usr/local/bin/protoc-gen-csharp-grpc
-COPY --from=build /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin /usr/local/bin/protoc-gen-objc-grpc
+# # Copy protoc-grpc default plugins
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_php_plugin /usr/local/bin/protoc-gen-php-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_python_plugin /usr/local/bin/protoc-gen-python-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_cpp_plugin /usr/local/bin/protoc-gen-cpp-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_ruby_plugin /usr/local/bin/protoc-gen-ruby-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_csharp_plugin /usr/local/bin/protoc-gen-csharp-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin /usr/local/bin/protoc-gen-objc-grpc
 
-# Copy protoc-grpc java plugin
-COPY --from=build /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
+# # Copy protoc-grpc java plugin
+COPY --from=protoc /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
 
 # Copy protoc-grpc js plugin
-COPY --from=build /tmp/protoc-gen-js/bin/protoc-gen-js /usr/local/bin/protoc-gen-js
+COPY --from=base /tmp/protoc-gen-js/bin/protoc-gen-js /usr/local/bin/protoc-gen-js
 
 # Copy protoc-grpc web plugin
-COPY --from=build /usr/local/bin/protoc-gen-web-grpc /usr/local/bin/protoc-gen-web-grpc
+COPY --from=base /usr/local/bin/protoc-gen-web-grpc /usr/local/bin/protoc-gen-web-grpc
 
-# Copy protoc-grpc node plugin
-COPY --from=build-node /usr/local/bin/protoc-gen-node-grpc /usr/local/bin/protoc-gen-node-grpc
-
-# Copy protoc and protoc-grpc go plugins
-COPY --from=build /usr/local/bin/protoc-gen-go /usr/local/bin/protoc-gen-go
-COPY --from=build /usr/local/bin/protoc-gen-go-grpc /usr/local/bin/protoc-gen-go-grpc
+# Copy protoc, protoc-grpc, protoc-gen-connect-go go plugins
+COPY --from=base /usr/local/bin/protoc-gen-go /usr/local/bin/protoc-gen-go
+COPY --from=base /usr/local/bin/protoc-gen-go-grpc /usr/local/bin/protoc-gen-go-grpc
 
 # Copy buf buf-lint and buf-breaking
-COPY --from=build /usr/local/bin/buf /usr/local/bin/buf
-COPY --from=build /usr/local/bin/protoc-gen-buf-breaking /usr/local/bin/protoc-gen-buf-breaking
-COPY --from=build /usr/local/bin/protoc-gen-buf-lint /usr/local/bin/protoc-gen-buf-lint
+COPY --from=base /usr/local/bin/buf /usr/local/bin/buf
+COPY --from=base /usr/local/bin/protoc-gen-buf-breaking /usr/local/bin/protoc-gen-buf-breaking
+COPY --from=base /usr/local/bin/protoc-gen-buf-lint /usr/local/bin/protoc-gen-buf-lint
+
+# Connect plugins
+COPY --from=base /usr/local/bin/protoc-gen-connect-go /usr/local/bin/protoc-gen-connect-go
 
 ENTRYPOINT ["/usr/local/bin/buf"]
