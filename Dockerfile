@@ -47,7 +47,7 @@ RUN GOBIN=/usr/local/bin go install \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@v${BUF_VERSION} \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@v${BUF_VERSION}
 
-# renovate: datasource=go depName=protoc_gen_connect_go packageName=connectrpc.com/connect/cmd/protoc-gen-connect-go
+# renovate: datasource=github-releases depName=protoc_gen_connect_go packageName=connectrpc/connect-go
 ARG PROTOC_GEN_CONNECT_GO_VERSION=1.18.1
 RUN GOBIN=/usr/local/bin go install \
     connectrpc.com/connect/cmd/protoc-gen-connect-go@v${PROTOC_GEN_CONNECT_GO_VERSION}
