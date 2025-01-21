@@ -30,24 +30,24 @@ RUN curl -sSL "https://github.com/grpc/grpc-web/releases/download/${GRPC_WEB_VER
     chmod +x /usr/local/bin/protoc-gen-web-grpc
 
 # https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go
-# renovate: datasource=golang depName=protoc-gen-go packageName=google.golang.org/protobuf/cmd/protoc-gen-go
+# renovate: datasource=go depName=protoc-gen-go packageName=google.golang.org/protobuf/cmd/protoc-gen-go
 ARG PROTOBUF_GO_VERSION=1.36.3
 RUN GOBIN=/usr/local/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOBUF_GO_VERSION}
 
 # https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc
-# renovate: datasource=golang depName=protoc-gen-go packageName=google.golang.org/grpc/cmd/protoc-gen-go-grpc
+# renovate: datasource=go depName=protoc-gen-go packageName=google.golang.org/grpc/cmd/protoc-gen-go-grpc
 ARG GRPC_GO_VERSION=1.5.1
 RUN GOBIN=/usr/local/bin go install "google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${GRPC_GO_VERSION}"
 
 # https://github.com/bufbuild/buf
-# renovate: datasource=golang depName=buf packageName=github.com/bufbuild/buf/cmd/buf
+# renovate: datasource=go depName=buf packageName=github.com/bufbuild/buf/cmd/buf
 ARG BUF_VERSION=1.50.0
 RUN GOBIN=/usr/local/bin go install \
     github.com/bufbuild/buf/cmd/buf@v${BUF_VERSION} \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@v${BUF_VERSION} \
     github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@v${BUF_VERSION}
 
-# renovate: datasource=golang depName=protoc_gen_connect_go packageName=connectrpc.com/connect/cmd/protoc-gen-connect-go
+# renovate: datasource=go depName=protoc_gen_connect_go packageName=connectrpc.com/connect/cmd/protoc-gen-connect-go
 ARG PROTOC_GEN_CONNECT_GO_VERSION=1.18.1
 RUN GOBIN=/usr/local/bin go install \
     connectrpc.com/connect/cmd/protoc-gen-connect-go@v${PROTOC_GEN_CONNECT_GO_VERSION}
