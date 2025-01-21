@@ -35,7 +35,7 @@ ARG PROTOBUF_GO_VERSION=1.36.3
 RUN GOBIN=/usr/local/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOBUF_GO_VERSION}
 
 # https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc
-# renovate: datasource=go depName=protoc-gen-go packageName=google.golang.org/grpc/cmd/protoc-gen-go-grpc
+# renovate: datasource=go depName=protoc-gen-go-grpc packageName=google.golang.org/grpc/cmd/protoc-gen-go-grpc
 ARG GRPC_GO_VERSION=1.5.1
 RUN GOBIN=/usr/local/bin go install "google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${GRPC_GO_VERSION}"
 
