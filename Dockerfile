@@ -104,7 +104,7 @@ ARG GRPC_NODE_TOOLS_VERSION=1.12.4
 # renovate: datasource=npm depName=buf-protoplugin packageName=@bufbuild/protoplugin
 ARG PROTOBUF_PROTOPLUGIN_VERSION=2.2.3
 # https://www.npmjs.com/package/@bufbuild/protoc-gen-es
-# renovate: datasource=github-npm depName=protobuf-gen-es packageName=@bufbuild/protoc-gen-es
+# renovate: datasource=npm depName=protobuf-gen-es packageName=@bufbuild/protoc-gen-es
 ARG PROTOBUF_ES_VERSION=2.2.3
 RUN npm i -g \
     grpc-tools@${GRPC_NODE_TOOLS_VERSION} \
