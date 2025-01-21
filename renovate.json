@@ -17,9 +17,6 @@
       ]
     }
   ],
-  "enabledManagers": [
-    "dockerfile"
-  ],
   "groupName": "all dependencies",
   "groupSlug": "all"
 }
