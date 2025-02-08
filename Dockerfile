@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 golang:1.23.1-bookworm AS base
+FROM golang:1.23.1-bookworm AS base
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -7,15 +7,31 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /tmp
 
+ARG TARGETPLATFORM
+
 # https://github.com/protocolbuffers/protobuf
 ARG PROTOBUF_VERSION
-RUN curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protoc-${PROTOBUF_VERSION}-linux-x86_64.zip" -o protoc.zip && \
+RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
+    PLATFORM="linux-x86_64"; \
+    elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
+    PLATFORM="linux-aarch_64"; \
+    else \
+    echo "Unsupported platform: ${TARGETPLATFORM}" && exit 1; \
+    fi && \
+    curl -sSL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protoc-${PROTOBUF_VERSION}-${PLATFORM}.zip" -o protoc.zip && \
     unzip protoc.zip -d protoc/ && \
     chmod +x ./protoc/bin/protoc
 
 # https://github.com/protocolbuffers/protobuf-javascript
 ARG PROTOBUF_JAVASCRIPT_VERSION
-RUN curl -sSL "https://github.com/protocolbuffers/protobuf-javascript/releases/download/v${PROTOBUF_JAVASCRIPT_VERSION}/protobuf-javascript-${PROTOBUF_JAVASCRIPT_VERSION}-linux-x86_64.zip" \
+RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
+    PLATFORM="linux-x86_64"; \
+    elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
+    PLATFORM="linux-aarch_64"; \
+    else \
+    echo "Unsupported platform: ${TARGETPLATFORM}" && exit 1; \
+    fi && \
+    curl -sSL "https://github.com/protocolbuffers/protobuf-javascript/releases/download/v${PROTOBUF_JAVASCRIPT_VERSION}/protobuf-javascript-${PROTOBUF_JAVASCRIPT_VERSION}-${PLATFORM}.zip" \
     -o protoc-gen-js.zip && \
     unzip protoc-gen-js.zip -d protoc-gen-js/ && \
     chmod +x protoc-gen-js/bin/protoc-gen-js
@@ -23,7 +39,14 @@ RUN curl -sSL "https://github.com/protocolbuffers/protobuf-javascript/releases/d
 # https://github.com/grpc/grpc-web
 WORKDIR /tmp
 ARG GRPC_WEB_VERSION
-RUN curl -sSL "https://github.com/grpc/grpc-web/releases/download/${GRPC_WEB_VERSION}/protoc-gen-grpc-web-${GRPC_WEB_VERSION}-linux-x86_64" -o /usr/local/bin/protoc-gen-web-grpc && \
+RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
+    PLATFORM="linux-x86_64"; \
+    elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
+    PLATFORM="linux-aarch_64"; \
+    else \
+    echo "Unsupported platform: ${TARGETPLATFORM}" && exit 1; \
+    fi && \
+    curl -sSL "https://github.com/grpc/grpc-web/releases/download/${GRPC_WEB_VERSION}/protoc-gen-grpc-web-${GRPC_WEB_VERSION}-${PLATFORM}" -o /usr/local/bin/protoc-gen-web-grpc && \
     chmod +x /usr/local/bin/protoc-gen-web-grpc
 
 # https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go
