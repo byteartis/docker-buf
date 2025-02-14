@@ -26,18 +26,18 @@ The image includes [Buf](https://buf.build/) to facilitate code generation, lint
 
 | Tool | Version |
 | - | - |
-| [buf](https://github.com/bufbuild/buf) | 1.50.0 |
-| [protoc](https://github.com/protocolbuffers/protobuf) | 29.3 |
-| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | 1.36.5 |
-| [protoc-gen-js](https://github.com/protocolbuffers/protobuf-javascript) | 3.21.4 |
-| [protoplugin](https://www.npmjs.com/package/@bufbuild/protoplugin) | 2.2.3 |
-| [protoc-gen-es](https://www.npmjs.com/package/@bufbuild/protoc-gen-es) | 2.2.3 |
-| [grpc](https://github.com/grpc/grpc) | 1.70.1 |
-| [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | 1.5.1 |
-| [grpc-java](https://github.com/grpc/grpc-java) | 1.70.0 |
-| [grpc-tools](https://www.npmjs.com/package/grpc-tools) | 1.13.0 |
-| [grpc-web](https://github.com/grpc/grpc-web) | 1.5.0 |
-| [protoc-gen-connect-go](https://github.com/connectrpc/connect-go) | 1.18.1 |
+| [buf](https://github.com/bufbuild/buf) | {{BUF_VERSION}} |
+| [protoc](https://github.com/protocolbuffers/protobuf) | {{PROTOC_VERSION}} |
+| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | {{PROTOC_GEN_GO_VERSION}} |
+| [protoc-gen-js](https://github.com/protocolbuffers/protobuf-javascript) | {{PROTOC_GEN_JS_VERSION}} |
+| [protoplugin](https://www.npmjs.com/package/@bufbuild/protoplugin) | {{PROTOPLUGIN_VERSION}} |
+| [protoc-gen-es](https://www.npmjs.com/package/@bufbuild/protoc-gen-es) | {{PROTOC_GEN_ES_VERSION}} |
+| [grpc](https://github.com/grpc/grpc) | {{GRPC_VERSION}} |
+| [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | {{PROTOC_GEN_GO_GRPC_VERSION}} |
+| [grpc-java](https://github.com/grpc/grpc-java) | {{GRPC_JAVA_VERSION}} |
+| [grpc-tools](https://www.npmjs.com/package/grpc-tools) | {{GRPC_TOOLS_VERSION}} |
+| [grpc-web](https://github.com/grpc/grpc-web) | {{GRPC_WEB_VERSION}} |
+| [protoc-gen-connect-go](https://github.com/connectrpc/connect-go) | {{PROTOC_GEN_CONNECT_GO_VERSION}} |
 
 ## Example
 
