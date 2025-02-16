@@ -1,4 +1,4 @@
-FROM golang:1.23.1-bookworm AS base
+FROM golang:1.24.0-bookworm AS base
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -115,19 +115,18 @@ RUN apt-get update && apt-get install -y git
 ARG GRPC_NODE_TOOLS_VERSION
 ARG PROTOBUF_PROTOPLUGIN_VERSION
 ARG PROTOBUF_ES_VERSION
-ARG CONNECT_ES_VERSION
 RUN npm i -g \
     grpc-tools@${GRPC_NODE_TOOLS_VERSION} \
     @bufbuild/protoplugin@${PROTOBUF_PROTOPLUGIN_VERSION} \
-    @bufbuild/protoc-gen-es@${PROTOBUF_ES_VERSION} \
-    @connectrpc/protoc-gen-connect-es@${CONNECT_ES_VERSION}
+    @bufbuild/protoc-gen-es@${PROTOBUF_ES_VERSION}
+
 RUN cp /usr/local/lib/node_modules/grpc-tools/bin/grpc_node_plugin /usr/local/bin/protoc-gen-node-grpc
 
 # Copy protoc and well known proto files
 COPY --from=base /tmp/protoc/bin/ /usr/local/bin/
 COPY --from=base /tmp/protoc/include/google/protobuf/ /opt/include/google/protobuf/
 
-# # Copy protoc-grpc default plugins
+# Copy protoc-grpc default plugins
 COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_php_plugin /usr/local/bin/protoc-gen-php-grpc
 COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_python_plugin /usr/local/bin/protoc-gen-python-grpc
 COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_cpp_plugin /usr/local/bin/protoc-gen-cpp-grpc
@@ -135,7 +134,7 @@ COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_ruby_plugin /usr/local/
 COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_csharp_plugin /usr/local/bin/protoc-gen-csharp-grpc
 COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin /usr/local/bin/protoc-gen-objc-grpc
 
-# # Copy protoc-grpc java plugin
+# Copy protoc-grpc java plugin
 COPY --from=protoc /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
 
 # Copy protoc-grpc js plugin
