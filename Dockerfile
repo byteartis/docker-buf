@@ -1,4 +1,4 @@
-FROM golang:1.24.0-bookworm AS base
+FROM golang:1.24.2-bookworm AS base
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -74,7 +74,7 @@ WORKDIR /
 
 ##########
 ##########
-FROM debian:bookworm-slim AS protoc
+FROM debian:bookworm-slim AS protoc_base
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -86,23 +86,20 @@ RUN apt-get update && apt-get install -y \
     curl
 
 WORKDIR /tmp
-
 # https://github.com/grpc/grpc
-ARG bazel=/tmp/grpc/tools/bazel
 ARG GRPC_VERSION
 RUN git clone --depth 1 --shallow-submodules -b v${GRPC_VERSION} --recursive https://github.com/grpc/grpc
-WORKDIR /tmp/grpc
-RUN $bazel build //src/compiler:all
-
-# # https://github.com/grpc/grpc-java
-WORKDIR /tmp
+# https://github.com/grpc/grpc-java
 ARG GRPC_JAVA_VERSION
 RUN git clone --depth 1 --shallow-submodules -b v${GRPC_JAVA_VERSION} --recursive https://github.com/grpc/grpc-java
+
+FROM protoc_base AS protoc
+WORKDIR /tmp/grpc
+RUN /tmp/grpc/tools/bazel build //src/compiler:all
+
+FROM protoc_base AS protoc-java
 WORKDIR /tmp/grpc-java
-RUN $bazel build //compiler:grpc_java_plugin
-
-WORKDIR /
-
+RUN /tmp/grpc/tools/bazel build //compiler:grpc_java_plugin
 
 ##########
 ##########
@@ -135,7 +132,7 @@ COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_csharp_plugin /usr/loca
 COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin /usr/local/bin/protoc-gen-objc-grpc
 
 # Copy protoc-grpc java plugin
-COPY --from=protoc /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
+COPY --from=protoc-java /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
 
 # Copy protoc-grpc js plugin
 COPY --from=base /tmp/protoc-gen-js/bin/protoc-gen-js /usr/local/bin/protoc-gen-js
