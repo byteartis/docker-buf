@@ -26,18 +26,18 @@ The image includes [Buf](https://buf.build/) to facilitate code generation, lint
 
 | Tool | Version |
 | - | - |
-| [buf](https://github.com/bufbuild/buf) | 1.53.0 |
-| [protoc](https://github.com/protocolbuffers/protobuf) | 30.2 |
-| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | 1.36.6 |
-| [protoc-gen-js](https://github.com/protocolbuffers/protobuf-javascript) | 3.21.4 |
-| [protoplugin](https://www.npmjs.com/package/@bufbuild/protoplugin) | 2.2.5 |
-| [protoc-gen-es](https://www.npmjs.com/package/@bufbuild/protoc-gen-es) | 2.2.5 |
-| [grpc](https://github.com/grpc/grpc) | 1.72.0 |
-| [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | 1.5.1 |
-| [grpc-java](https://github.com/grpc/grpc-java) | 1.72.0 |
-| [grpc-tools](https://www.npmjs.com/package/grpc-tools) | 1.13.0 |
-| [grpc-web](https://github.com/grpc/grpc-web) | 1.5.0 |
-| [protoc-gen-connect-go](https://github.com/connectrpc/connect-go) | 1.18.1 |
+| [buf](https://github.com/bufbuild/buf) | 1.72.0 |
+| [protoc](https://github.com/protocolbuffers/protobuf) | 36.0 |
+| [protoc-gen-go](https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go) | 1.36.12 |
+| [protoc-gen-js](https://github.com/protocolbuffers/protobuf-javascript) | 4.0.2 |
+| [protoplugin](https://www.npmjs.com/package/@bufbuild/protoplugin) | 2.14.0 |
+| [protoc-gen-es](https://www.npmjs.com/package/@bufbuild/protoc-gen-es) | 2.14.0 |
+| [grpc](https://github.com/grpc/grpc) | 1.83.0 |
+| [protoc-gen-go-grpc](https://pkg.go.dev/google.golang.org/grpc/cmd/protoc-gen-go-grpc) | 1.6.2 |
+| [grpc-java](https://github.com/grpc/grpc-java) | 1.83.1 |
+| [grpc-tools](https://www.npmjs.com/package/grpc-tools) | 1.13.1 |
+| [grpc-web](https://github.com/grpc/grpc-web) | 2.1.0 |
+| [protoc-gen-connect-go](https://github.com/connectrpc/connect-go) | 1.20.0 |
 
 ## Example
 

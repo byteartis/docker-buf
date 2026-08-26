@@ -1,4 +1,4 @@
-FROM golang:1.24.2-bookworm AS base
+FROM golang:1.27.0-bookworm AS base
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -42,11 +42,11 @@ ARG GRPC_WEB_VERSION
 RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
     PLATFORM="linux-x86_64"; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
-    PLATFORM="linux-aarch_64"; \
+    PLATFORM="linux-aarch64"; \
     else \
     echo "Unsupported platform: ${TARGETPLATFORM}" && exit 1; \
     fi && \
-    curl -sSL "https://github.com/grpc/grpc-web/releases/download/${GRPC_WEB_VERSION}/protoc-gen-grpc-web-${GRPC_WEB_VERSION}-${PLATFORM}" -o /usr/local/bin/protoc-gen-web-grpc && \
+    curl -fsSL --retry 5 --retry-all-errors "https://github.com/grpc/grpc-web/releases/download/${GRPC_WEB_VERSION}/protoc-gen-grpc-web-${GRPC_WEB_VERSION}-${PLATFORM}" -o /usr/local/bin/protoc-gen-web-grpc && \
     chmod +x /usr/local/bin/protoc-gen-web-grpc
 
 # https://pkg.go.dev/google.golang.org/protobuf/cmd/protoc-gen-go
@@ -124,12 +124,12 @@ COPY --from=base /tmp/protoc/bin/ /usr/local/bin/
 COPY --from=base /tmp/protoc/include/google/protobuf/ /opt/include/google/protobuf/
 
 # Copy protoc-grpc default plugins
-COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_php_plugin /usr/local/bin/protoc-gen-php-grpc
-COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_python_plugin /usr/local/bin/protoc-gen-python-grpc
-COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_cpp_plugin /usr/local/bin/protoc-gen-cpp-grpc
-COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_ruby_plugin /usr/local/bin/protoc-gen-ruby-grpc
-COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_csharp_plugin /usr/local/bin/protoc-gen-csharp-grpc
-COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin /usr/local/bin/protoc-gen-objc-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_php_plugin_binary /usr/local/bin/protoc-gen-php-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_python_plugin_binary /usr/local/bin/protoc-gen-python-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_cpp_plugin_binary /usr/local/bin/protoc-gen-cpp-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_ruby_plugin_binary /usr/local/bin/protoc-gen-ruby-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_csharp_plugin_binary /usr/local/bin/protoc-gen-csharp-grpc
+COPY --from=protoc /tmp/grpc/bazel-bin/src/compiler/grpc_objective_c_plugin_binary /usr/local/bin/protoc-gen-objc-grpc
 
 # Copy protoc-grpc java plugin
 COPY --from=protoc-java /tmp/grpc-java/bazel-bin/compiler/grpc_java_plugin /usr/local/bin/protoc-gen-java-grpc
